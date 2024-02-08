@@ -253,6 +253,12 @@ impl ImageClient {
             }
         };
 
+        if  cfg!(feature = "nydus") {
+            println! ("Nydus is enabled");
+        }else {
+            println! ("Nydus is no enabled");
+        }
+
         #[cfg(feature = "nydus")]
         if utils::is_nydus_image(&image_manifest) {
             {
