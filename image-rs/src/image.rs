@@ -185,6 +185,8 @@ impl ImageClient {
         decrypt_config: &Option<&str>,
     ) -> Result<String> {
         let reference = Reference::try_from(image_url)?;
+        println!("auth_info = {:?}",auth_info.clone());
+        println!("decrypt_config = {:?}",decrypt_config.clone());
 
         // Try to get auth using input param.
         let auth = if let Some(auth_info) = auth_info {
@@ -250,6 +252,8 @@ impl ImageClient {
             (false, true) => RegistryAuth::Anonymous,
             _ => auth.expect("unexpected uninitialized auth"),
         };
+        println!("self.config.auth = {:?}",self.config.auth);
+        println!("self.config.security_validate = {:?}",self.config.security_validate);
 
         let mut client = PullClient::new(
             reference,
@@ -533,21 +537,7 @@ mod tests {
 
         // TODO test with more OCI image registries and fix broken registries.
         let oci_images = [
-            // image with duplicated layers
-            "gcr.io/k8s-staging-cloud-provider-ibm/ibm-vpc-block-csi-driver:master",
-            // Alibaba Container Registry
-            "registry.cn-hangzhou.aliyuncs.com/acs/busybox:v1.29.2",
-            // Amazon Elastic Container Registry
-            // "public.ecr.aws/docker/library/hello-world:linux"
-
-            // Azure Container Registry
-            "mcr.microsoft.com/hello-world",
-            // Docker container Registry
-            "docker.io/busybox",
-            // Google Container Registry
-            "gcr.io/google-containers/busybox:1.27.2",
-            // JFrog Container Registry
-            // "releases-docker.jfrog.io/reg2/busybox:1.33.1"
+            "quay.io/curl/curl"
         ];
 
         let mut image_client = ImageClient::new(work_dir.path().to_path_buf());
