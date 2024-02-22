@@ -254,6 +254,8 @@ impl ImageClient {
         };
         println!("self.config.auth = {:?}",self.config.auth);
         println!("self.config.security_validate = {:?}",self.config.security_validate);
+        println!("auth = {:?}",auth);
+        println!("reference = {:?}",reference);
 
         let mut client = PullClient::new(
             reference,
@@ -261,9 +263,13 @@ impl ImageClient {
             &auth,
             self.config.max_concurrent_download,
         )?;
+        println!("create  PullClient");
+
         let (image_manifest, image_digest, image_config) = client.pull_manifest().await?;
+        println!("pull manifest done");
 
         let id = image_manifest.config.digest.clone();
+        println!("get config digest");
 
         let snapshot = match self.snapshots.get_mut(&self.config.default_snapshot) {
             Some(s) => s,
@@ -283,6 +289,7 @@ impl ImageClient {
                     return service::create_nydus_bundle(image_data, bundle_dir, snapshot);
                 }
             }
+            println!("create_nydus_bundle ");
 
             #[cfg(feature = "signature")]
             if self.config.security_validate {
@@ -295,6 +302,7 @@ impl ImageClient {
                 .await
                 .map_err(|e| anyhow!("Security validate failed: {:?}", e))?;
             }
+            println!("allows_image ");
 
             let (mut image_data, _, _) = create_image_meta(
                 &id,
@@ -303,6 +311,7 @@ impl ImageClient {
                 &image_digest,
                 &image_config,
             )?;
+            println!("create_image_meta ");
 
             return self
                 .do_pull_image_with_nydus(
@@ -314,6 +323,7 @@ impl ImageClient {
                 )
                 .await;
         }
+        println!("no nydus image");
 
         // If image has already been populated, just create the bundle.
         {
@@ -394,7 +404,7 @@ impl ImageClient {
         } else {
             bail!("Failed to get bootstrap id, diff_ids is empty");
         };
-
+        
         let bootstrap = utils::get_nydus_bootstrap_desc(image_manifest)
             .ok_or_else(|| anyhow!("Faild to get bootstrap oci descriptor"))?;
         let layer_metas = client
@@ -405,6 +415,7 @@ impl ImageClient {
                 self.meta_store.clone(),
             )
             .await?;
+        println!("pull_bootstrap ");
         image_data.layer_metas = vec![layer_metas];
         let layer_db: HashMap<String, LayerMeta> = image_data
             .layer_metas
@@ -442,6 +453,7 @@ impl ImageClient {
             snapshot,
         )
         .await?;
+        println!("start_nydus_service ");
 
         self.meta_store
             .lock()
