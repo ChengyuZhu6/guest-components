@@ -167,7 +167,8 @@ impl ImageClient {
         decrypt_config: &Option<&str>,
     ) -> Result<String> {
         let reference = Reference::try_from(image_url)?;
-
+        self.config.auth=false;
+        self.config.security_validate=false;
         // Try to get auth using input param.
         let auth = if let Some(auth_info) = auth_info {
             if let Some((username, password)) = auth_info.split_once(':') {
