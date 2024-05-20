@@ -33,6 +33,8 @@ func main() {
 
 	// The client currently supports only UnsealSecret operation.
 	// We need to implement the following operations: GetResource, SecureMount, and UnwrapKey.
+	fmt.Printf("common.OperationType = %s", common.OperationType)
+
 	switch common.OperationType {
 	case "UnsealSecret":
 		if common.OperationInterface == "UnsealEnv" {
