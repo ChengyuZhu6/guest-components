@@ -10,7 +10,10 @@ require (
 )
 
 require (
+	github.com/ChengyuZhu6/protobuild v0.99.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
+	github.com/golang/protobuf v1.5.4 // indirect
+	github.com/pelletier/go-toml v1.8.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/sirupsen/logrus v1.8.1 // indirect
 	golang.org/x/net v0.23.0 // indirect
